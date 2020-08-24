@@ -1,0 +1,5 @@
+tab_spaces = 4
+hard_tabs = true
+newline_style = "Unix"
+empty_item_single_line = false
+struct_lit_single_line = false

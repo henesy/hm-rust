@@ -1,5 +1,5 @@
-use std::hash::Hash;
 use std::collections::hash_map::DefaultHasher;
+use std::hash::Hash;
 
 // Set the number of buckets in a hashmap to 16
 const NBUCKETS: usize = 16;
@@ -8,10 +8,10 @@ const NBUCKETS: usize = 16;
 type Bucket<K, V> = Vec<(K, V)>;
 
 pub struct HashMap<K, V> {
-	buckets: Vec<Bucket<K, V>>,		// Buckets speed up get()'ing values
+	buckets: Vec<Bucket<K, V>>, // Buckets speed up get()'ing values
 }
 
-/* Constrain K's type to: 
+/* Constrain K's type to:
 	- require implementation of Hash trait
 	- be comparable with == via PartialEq trait
 	- be copy-able via Copy trait (shared by V)
@@ -27,19 +27,17 @@ impl<K: Hash + PartialEq + Copy, V: Copy> HashMap<K, V> {
 			buckets.push(Vec::new());
 		}
 
-		Self { 
-			buckets 
-		}
+		Self { buckets }
 	}
 
 	// Insert a new value into the hashmap - should never fail
-	pub fn insert(&mut self, key: K, val: V) -> Option<K> { 
+	pub fn insert(&mut self, key: K, val: V) -> Option<K> {
 		let bucket = self.key2bucket_mut(&key);
 
 		match bucket.iter_mut().find_map(|pair| {
 			if pair.0 == key {
 				// Swap collisions with new value
-				std::mem::swap(pair, &mut  (key, val));
+				std::mem::swap(pair, &mut (key, val));
 
 				return Some(key);
 			} else {
@@ -53,7 +51,7 @@ impl<K: Hash + PartialEq + Copy, V: Copy> HashMap<K, V> {
 			_ => (),
 		}
 
-		return Some(key)
+		return Some(key);
 	}
 
 	// Retrieve an existing value from the hashmap
@@ -62,7 +60,7 @@ impl<K: Hash + PartialEq + Copy, V: Copy> HashMap<K, V> {
 			if pair.0 == key {
 				return Some(&pair.1);
 			} else {
-				return None
+				return None;
 			}
 		});
 	}
@@ -81,7 +79,7 @@ impl<K: Hash + PartialEq + Copy, V: Copy> HashMap<K, V> {
 			}
 		}) {
 			// Delete by index
-			Some(i)=> Some(bucket.remove(i).1),
+			Some(i) => Some(bucket.remove(i).1),
 
 			None => None,
 		}
@@ -106,15 +104,15 @@ impl<K: Hash + PartialEq + Copy, V: Copy> HashMap<K, V> {
 	}
 
 	// Return target bucket for a given key - immutable
-	fn key2bucket(&self, key: &K) -> &Vec<(K,V)> {
+	fn key2bucket(&self, key: &K) -> &Vec<(K, V)> {
 		let index = self.key2index(key);
 		let bucket = &self.buckets[index as usize];
-		
+
 		return bucket;
 	}
 
 	// Acquire target bucket for a given key - mutable
-	fn key2bucket_mut(&mut self, key: &K) -> &mut Vec<(K,V)> {
+	fn key2bucket_mut(&mut self, key: &K) -> &mut Vec<(K, V)> {
 		let index = self.key2index(key);
 		let bucket = &mut self.buckets[index as usize];
 
